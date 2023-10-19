@@ -93,49 +93,51 @@ class _List extends ConsumerWidget {
   const _List();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<List<int>> dataList = ref.watch(dataListProvider);
+    final listCount =
+        ref.watch(dataListProvider.select((value) => value.length));
 
     return Expanded(
       child: ListView.separated(
         itemBuilder: (context, index) {
           return _ListRow(
-            data: dataList[index],
+            row: index,
           );
         },
         separatorBuilder: (context, index) => const SizedBox(
           height: 5,
         ),
-        itemCount: dataList.length,
+        itemCount: listCount,
       ),
     );
   }
 }
 
 class _ListRow extends StatelessWidget {
-  const _ListRow({required this.data});
-
-  final List<int> data;
-
+  const _ListRow({required this.row});
+  final int row;
   @override
   Widget build(BuildContext context) {
     print('Rebuild row');
     return Row(
       children: [
-        _ListCell(data: data[0]),
-        _ListCell(data: data[1]),
-        _ListCell(data: data[2]),
+        _ListCell(row: row, column: 0),
+        _ListCell(row: row, column: 1),
+        _ListCell(row: row, column: 2),
       ],
     );
   }
 }
 
 class _ListCell extends HookConsumerWidget {
-  const _ListCell({required this.data});
-  final int data;
+  const _ListCell({required this.row, required this.column});
+  final int row;
+  final int column;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     print('Rebuild cell');
+    final data =
+        ref.watch(dataListProvider.select((value) => value[row][column]));
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
