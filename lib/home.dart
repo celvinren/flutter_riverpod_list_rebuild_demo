@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class MyHomePage extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            _BackButton(),
             _Header(),
             SizedBox(height: 15),
             _List(),
@@ -27,6 +29,20 @@ class MyHomePage extends HookConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+class _BackButton extends StatelessWidget {
+  const _BackButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        onPressed: () {
+          print('--------------- back button pressed ----------------');
+          Navigator.of(context).pop();
+        },
+        child: const Text('Back'));
   }
 }
 
@@ -117,7 +133,7 @@ class _ListRow extends StatelessWidget {
   final int row;
   @override
   Widget build(BuildContext context) {
-    print('Rebuild row');
+    print('********* Rebuild row *********');
     return Row(
       children: [
         _ListCell(row: row, column: 0),
@@ -136,8 +152,8 @@ class _ListCell extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     print('Rebuild cell');
-    final data =
-        ref.watch(dataListProvider.select((value) => value[row][column]));
+
+    final data = ref.watch(getCellDataProvider(row, column));
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
@@ -146,6 +162,30 @@ class _ListCell extends HookConsumerWidget {
       ),
       child: Text(data.toString()),
     );
+  }
+}
+
+@riverpod
+int listCount(ListCountRef ref) {
+  print('init listCount');
+  ref.onDispose(() {
+    print('listCount disposed');
+  });
+  return ref.watch(dataListProvider).length;
+}
+
+@riverpod
+class GetCellData extends _$GetCellData {
+  @override
+  int build(int row, int column) {
+    print('init getCellData');
+
+    ref.onDispose(() {
+      print('getCellData disposed');
+    });
+    final data =
+        ref.watch(dataListProvider.select((value) => value[row][column]));
+    return data;
   }
 }
 

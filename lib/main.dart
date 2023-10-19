@@ -3,7 +3,7 @@ import 'package:flutter_riverpod_list_rebuild_demo/home.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -21,9 +21,33 @@ class MyApp extends StatelessWidget {
             fontSize: 30,
           ),
         ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+          ),
+        ),
       ),
-      home: const ProviderScope(
-        child: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const _MainPage(),
+    );
+  }
+}
+
+class _MainPage extends StatelessWidget {
+  const _MainPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
+        child: const Text('Go to list'),
+        onPressed: () {
+          Navigator.of(context).push<void>(
+            MaterialPageRoute(
+              builder: (_) => const MyHomePage(title: 'List'),
+            ),
+          );
+        },
       ),
     );
   }
